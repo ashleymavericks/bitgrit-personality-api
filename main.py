@@ -12,7 +12,7 @@ import speech_recognition as sr
 r = sr.Recognizer()
 
 app = Flask(__name__)
-
+app.config['VIDEO_UPLOAD']='./bitgrit-personality-api/video'
 
 # movie to mp3 file conversion
 def video_converter(video_path):
@@ -39,9 +39,10 @@ def speech_conversion(audio_path):
 
 
 @app.route("/video", methods=['POST'])
+
 def get_text_from_video():
     # Video input taking and storage
-    if request.method = "POST":
+    if request.method == "POST":
         if request.files:
             video = request.files['video']
             video.save(os.path.join('app.config['VIDEO_UPLOAD']', video.filename))
