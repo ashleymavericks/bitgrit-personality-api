@@ -13,41 +13,22 @@ import speech_recognition as sr
 r = sr.Recognizer()
 
 app = Flask(__name__)
-app.config['VIDEO_UPLOAD']='./bitgrit-personality-api/video'
 
-# movie to mp3 file conversion
-def video_converter(video_path):
-    video_clip = mp.VideoFileClip(video_path)
-    video_clip.audio.write_audiofile(r"./audio/audio.mp3")
-    return os.path.abspath(r"./audio/audio.mp3")
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLD = './bitgrit-personality-api/video/'
+UPLOAD_FOLDER = os.path.join(APP_ROOT, UPLOAD_FOLD)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# mp3 to wav file conversion
-
-
-def wav_conversion(audio_path):
-    sound = pydub.AudioSegment.from_mp3(audio_path)
-    sound.export('./audio/audio.wav', format='wav')
-    return os.path.abspath('./audio/audio.wav')
-
-# wav to text file conversion
-
-
-def speech_conversion(audio_path):
-    with sr.AudioFile(audio_path) as source:
-        audio = r.record(source)
-        val = r.recognize_google(audio)
-        return val
-
+@app.route('/')
 
 @app.route("/video", methods=['POST'])
-
 def get_text_from_video():
     # Video input taking and storage
     if request.method == "POST":
         if request.files:
             video = request.files['video']
-            video.save(os.path.join('app.config['VIDEO_UPLOAD']', video.filename))
-
+            video.save(os.path.join('app.config['UPLOAD_FOLDER']', video.filename))
+    
     # Processing of video starts
     audio_path = video_converter(video_path)
     wav_path = wav_conversion(audio_path)
