@@ -10,7 +10,7 @@ import json
 import speech_recognition as sr
 r = sr.Recognizer()
 
-UPLOAD_FOLDER = "/mnt/c/Users/ashleymavericks/Documents/Covid-19-Break/bitgrit-personality-api/video"
+UPLOAD_FOLDER = "./video/"
 
 app = Flask(__name__)
 app.secret_key = "secret key"
