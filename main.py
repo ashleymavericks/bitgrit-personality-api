@@ -7,6 +7,7 @@ import moviepy.editor as mp
 import pydub
 import os
 import json
+import ffprobe
 import speech_recognition as sr
 r = sr.Recognizer()
 
@@ -19,27 +20,35 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = set(['mp4'])
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # movie to mp3 file conversion
+
+
 def video_converter(video_path):
     video_clip = mp.VideoFileClip(video_path)
     video_clip.audio.write_audiofile(r"./audio/audio.mp3")
     return os.path.abspath(r"./audio/audio.mp3")
 
 # mp3 to wav file conversion
+
+
 def wav_conversion(audio_path):
     sound = pydub.AudioSegment.from_mp3(audio_path)
     sound.export('./audio/audio.wav', format='wav')
     return os.path.abspath('./audio/audio.wav')
 
 # wav to text file conversion
+
+
 def speech_conversion(audio_path):
     with sr.AudioFile(audio_path) as source:
         audio = r.record(source)
         val = r.recognize_google(audio)
         return val
+
 
 @app.route('/')
 def upload_form():
