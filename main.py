@@ -45,8 +45,12 @@ def speech_conversion(audio_path):
 def upload_form():
     return render_template("upload.html")
 
+@app.route('/api', methods=['GET'])
+def method_not_allowed():
+    return json.dumps({'response': "Method not allowed"}), 405, {'Content-Type': 'application/json'}
 
-@app.route("/", methods=['POST'])
+
+@app.route("/api", methods=['POST'])
 def get_text_from_video():
     if request.method == 'POST':
         # check if the post request has the file part
