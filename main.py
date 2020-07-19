@@ -10,7 +10,7 @@ import json
 import speech_recognition as sr
 r = sr.Recognizer()
 
-UPLOAD_FOLDER = "./video"
+UPLOAD_FOLDER = "./video/"
 
 app = Flask(__name__)
 app.secret_key = "secret key"
