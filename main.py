@@ -7,7 +7,6 @@ import moviepy.editor as mp
 import pydub
 import os
 import json
-import ffprobe
 import speech_recognition as sr
 r = sr.Recognizer()
 
