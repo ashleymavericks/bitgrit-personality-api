@@ -17,7 +17,6 @@ MarkupSafe==1.1.1
 moviepy==1.0.3
 numpy==1.19.0
 Pillow==7.2.0
-pkg-resources==0.0.0
 proglog==0.1.9
 pydub==0.24.1
 PyJWT==1.7.1
