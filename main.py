@@ -3,21 +3,21 @@ from werkzeug.utils import secure_filename
 from ibm_watson import PersonalityInsightsV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from os.path import join, dirname
-import moviepy.editor as mp
-import pydub
+# import moviepy.editor as mp
+# import pydub
 import os
 import json
 import speech_recognition as sr
 r = sr.Recognizer()
 
-UPLOAD_FOLDER = "./video/"
+UPLOAD_FOLDER = "./audio/"
 
 app = Flask(__name__)
 app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
 
-ALLOWED_EXTENSIONS = set(['mp4'])
+ALLOWED_EXTENSIONS = set(['wav'])
 
 
 def allowed_file(filename):
@@ -26,22 +26,20 @@ def allowed_file(filename):
 # movie to mp3 file conversion
 
 
-def video_converter(video_path):
-    video_clip = mp.VideoFileClip(video_path)
-    video_clip.audio.write_audiofile(r"./audio/audio.mp3")
-    return os.path.abspath(r"./audio/audio.mp3")
+# def video_converter(video_path):
+#     video_clip = mp.VideoFileClip(video_path)
+#     video_clip.audio.write_audiofile(r"./audio/audio.mp3")
+#     return os.path.abspath(r"./audio/audio.mp3")
 
 # mp3 to wav file conversion
 
 
-def wav_conversion(audio_path):
-    sound = pydub.AudioSegment.from_mp3(audio_path)
-    sound.export('./audio/audio.wav', format='wav')
-    return os.path.abspath('./audio/audio.wav')
+# def wav_conversion(audio_path):
+#     sound = pydub.AudioSegment.from_mp3(audio_path)
+#     sound.export('./audio/audio.wav', format='wav')
+#     return os.path.abspath('./audio/audio.wav')
 
 # wav to text file conversion
-
-
 def speech_conversion(audio_path):
     with sr.AudioFile(audio_path) as source:
         audio = r.record(source)
@@ -69,9 +67,10 @@ def get_text_from_video():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File successfully uploaded')
-            video_path = "./video/video.mp4"
-            audio_path = video_converter(video_path)
-            wav_path = wav_conversion(audio_path)
+            # video_path = "./video/video.mp4"
+            # audio_path = video_converter(video_path)
+            # wav_path = wav_conversion(audio_path)
+            wav_path = "./audio/audio.wav"
             textvalue = speech_conversion(wav_path)
 
             f = open("./speech-to-text/profile.txt", "w")
@@ -100,7 +99,7 @@ def get_text_from_video():
             return value, 200, {'Content-Type': 'application/json'}
 
         else:
-            flash('Allowed file type is video (.mp4)')
+            flash('Allowed file type is video (.wav)')
             return redirect(request.url)
 
 
