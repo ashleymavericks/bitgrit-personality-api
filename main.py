@@ -50,7 +50,7 @@ def upload_form():
     return render_template("upload.html")
 
 
-@app.route("/", methods=['POST'])
+@app.route("/video", methods=['POST'])
 def get_text_from_video():
     if request.method == 'POST':
         # check if the post request has the file part
