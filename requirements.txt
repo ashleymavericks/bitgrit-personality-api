@@ -21,7 +21,7 @@ MarkupSafe==1.1.1
 numpy==1.19.0
 Pillow==7.2.0
 proglog==0.1.9
-# pydub==0.24.1
+pydub==0.24.1
 PyJWT==1.7.1
 python-dateutil==2.8.1
 python-slugify==4.0.1
