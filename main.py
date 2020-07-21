@@ -99,8 +99,8 @@ def get_text_from_video():
         else:
             flash('Allowed file type is video (.wav)')
             return redirect(request.url)
-
-    return render_template("fail.html")
+    else:
+        return render_template("fail.html")
     
 
 
