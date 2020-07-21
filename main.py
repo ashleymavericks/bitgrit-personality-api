@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 from ibm_watson import PersonalityInsightsV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from os.path import join, dirname
-# import moviepy.editor as mp
+import moviepy.editor as mp
 import pydub
 import os
 import json
