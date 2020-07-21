@@ -100,6 +100,9 @@ def get_text_from_video():
             flash('Allowed file type is video (.wav)')
             return redirect(request.url)
 
+    return render_template("fail.html")
+    
+
 
 if __name__ == '__main__':
     app.run(debug=True)
