@@ -15,9 +15,9 @@ UPLOAD_FOLDER = "./audio/"
 app = Flask(__name__)
 app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
 
-ALLOWED_EXTENSIONS = set(['mp3'])
+ALLOWED_EXTENSIONS = set(['wav'])
 
 
 def allowed_file(filename):
@@ -32,10 +32,10 @@ def allowed_file(filename):
 #     return os.path.abspath(r"./audio/audio.mp3")
 
 # mp3 to wav file conversion
-def wav_conversion(audio_path):
-    sound = pydub.AudioSegment.from_mp3(audio_path)
-    sound.export('./audio/audio.wav', format='wav')
-    return os.path.abspath('./audio/audio.wav')
+# def wav_conversion(audio_path):
+#     sound = pydub.AudioSegment.from_mp3(audio_path)
+#     sound.export('./audio/audio.wav', format='wav')
+#     return os.path.abspath('./audio/audio.wav')
 
 # wav to text file conversion
 def speech_conversion(audio_path):
@@ -67,8 +67,8 @@ def get_text_from_video():
             flash('File successfully uploaded')
             # video_path = "./video/video.mp4"
             # audio_path = video_converter(video_path)
-            audio_path = "./audio/audio.mp3"
-            wav_path = wav_conversion(audio_path)
+            wav_path = "./audio/audio.wav"
+            # wav_path = wav_conversion(audio_path)
             textvalue = speech_conversion(wav_path)
 
             f = open("./speech-to-text/profile.txt", "w")
@@ -97,7 +97,7 @@ def get_text_from_video():
             return value, 200, {'Content-Type': 'application/json'}
 
         else:
-            flash('Allowed file type is video (.mp3)')
+            flash('Allowed file type is video (.wav)')
             return redirect(request.url)
 
 
