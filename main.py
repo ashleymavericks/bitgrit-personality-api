@@ -10,32 +10,29 @@ import json
 import speech_recognition as sr
 r = sr.Recognizer()
 
-UPLOAD_FOLDER = "./audio/"
+UPLOAD_FOLDER = "./video/"
 
 app = Flask(__name__)
 app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
 
-ALLOWED_EXTENSIONS = set(['wav'])
-
+ALLOWED_EXTENSIONS = set(['mp4'])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# movie to mp3 file conversion
-
-
-# def video_converter(video_path):
-#     video_clip = mp.VideoFileClip(video_path)
-#     video_clip.audio.write_audiofile(r"./audio/audio.mp3")
-#     return os.path.abspath(r"./audio/audio.mp3")
+# video to mp3 file conversion
+def video_converter(video_path):
+    video_clip = mp.VideoFileClip(video_path)
+    video_clip.audio.write_audiofile(r"./audio/audio.mp3")
+    return os.path.abspath(r"./audio/audio.mp3")
 
 # mp3 to wav file conversion
-# def wav_conversion(audio_path):
-#     sound = pydub.AudioSegment.from_mp3(audio_path)
-#     sound.export('./audio/audio.wav', format='wav')
-#     return os.path.abspath('./audio/audio.wav')
+def wav_conversion(audio_path):
+    sound = pydub.AudioSegment.from_mp3(audio_path)
+    sound.export('./audio/audio.wav', format='wav')
+    return os.path.abspath('./audio/audio.wav')
 
 # wav to text file conversion
 def speech_conversion(audio_path):
@@ -65,12 +62,12 @@ def get_text_from_video():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File successfully uploaded')
-            # video_path = "./video/video.mp4"
-            # audio_path = video_converter(video_path)
-            wav_path = "./audio/audio.wav"
-            # wav_path = wav_conversion(audio_path)
+            video_path = "./video/video.mp4"
+            audio_path = video_converter(video_path)
+            wav_path = wav_conversion(audio_path)
             textvalue = speech_conversion(wav_path)
 
+            # Writing Speech-to-Text response to a file
             f = open("./speech-to-text/profile.txt", "w")
             f.write(textvalue)
             f.close()
@@ -97,11 +94,8 @@ def get_text_from_video():
             return value, 200, {'Content-Type': 'application/json'}
 
         else:
-            flash('Allowed file type is video (.wav)')
+            flash('Allowed file type is video (.mp4)')
             return redirect(request.url)
-    else:
-        return render_template("fail.html")
-    
 
 
 if __name__ == '__main__':
