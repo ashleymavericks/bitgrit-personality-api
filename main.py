@@ -19,22 +19,29 @@ app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = set(['mp4'])
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # video to mp3 file conversion
+
+
 def video_converter(video_path):
     video_clip = mp.VideoFileClip(video_path)
     video_clip.audio.write_audiofile(r"./audio/audio.mp3")
     return os.path.abspath(r"./audio/audio.mp3")
 
 # mp3 to wav file conversion
+
+
 def wav_conversion(audio_path):
     sound = pydub.AudioSegment.from_mp3(audio_path)
     sound.export('./audio/audio.wav', format='wav')
     return os.path.abspath('./audio/audio.wav')
 
 # wav to text file conversion
+
+
 def speech_conversion(audio_path):
     with sr.AudioFile(audio_path) as source:
         audio = r.record(source)
@@ -90,6 +97,8 @@ def get_text_from_video():
                     raw_scores=True
                 ).get_result()
 
+            if not profile:
+                profile = {}
             value = json.dumps(profile, indent=2)
             return value, 200, {'Content-Type': 'application/json'}
 
