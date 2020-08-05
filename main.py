@@ -105,8 +105,11 @@ def get_text_from_video():
                 ).get_result()
 
             value = json.dumps(profile, indent=2)
-            data={"text":textvalue,"json":value}
+            name = request.form['username']
+            question_number = request.form['question_no']
+            data={"text":textvalue,"json":value, "username":name, "question_no":question_number}
             db.child("personality-data").push(data)
+            # db.child("personality-data").child(name).set(data)
             return value, 200, {'Content-Type': 'application/json'}
 
         else:
