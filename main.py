@@ -8,6 +8,21 @@ import pydub
 import os
 import json
 import speech_recognition as sr
+import pyrebase
+
+config = {
+    "apiKey": "AIzaSyC9un2vGUcmrC3T9DCrZNjUDhhKmq_KP4M",
+    "authDomain": "bitgrit-api.firebaseapp.com",
+    "databaseURL": "https://bitgrit-api.firebaseio.com",
+    "projectId": "bitgrit-api",
+    "storageBucket": "bitgrit-api.appspot.com",
+    "messagingSenderId": "915449222893",
+    "appId": "1:915449222893:web:df897137a0f6bc0ff5dee4",
+    "measurementId": "G-XQRCNYG002"
+}
+
+firebase = pyrebase.initialize_app(config)
+db = firebase.database()
 r = sr.Recognizer()
 
 UPLOAD_FOLDER = "./video/"
@@ -19,29 +34,22 @@ app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = set(['mp4'])
 
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # video to mp3 file conversion
-
-
 def video_converter(video_path):
     video_clip = mp.VideoFileClip(video_path)
     video_clip.audio.write_audiofile(r"./audio/audio.mp3")
     return os.path.abspath(r"./audio/audio.mp3")
 
 # mp3 to wav file conversion
-
-
 def wav_conversion(audio_path):
     sound = pydub.AudioSegment.from_mp3(audio_path)
     sound.export('./audio/audio.wav', format='wav')
     return os.path.abspath('./audio/audio.wav')
 
 # wav to text file conversion
-
-
 def speech_conversion(audio_path):
     with sr.AudioFile(audio_path) as source:
         audio = r.record(source)
@@ -49,12 +57,11 @@ def speech_conversion(audio_path):
         return val
 
 
-@app.route('/')
-def upload_form():
-    return render_template("upload.html")
+# @app.route('/')
+# def upload_form():
+#     return render_template("upload.html")
 
-
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST','GET'])
 def get_text_from_video():
     if request.method == 'POST':
         # check if the post request has the file part
@@ -97,15 +104,15 @@ def get_text_from_video():
                     raw_scores=True
                 ).get_result()
 
-            if not profile:
-                profile = {}
             value = json.dumps(profile, indent=2)
+            data={"text":textvalue,"json":value}
+            db.child("personality-data").push(data)
             return value, 200, {'Content-Type': 'application/json'}
 
         else:
             flash('Allowed file type is video (.mp4)')
             return redirect(request.url)
-
+    return render_template("upload.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
