@@ -25,7 +25,7 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 r = sr.Recognizer()
 
-UPLOAD_FOLDER = "./video/"
+UPLOAD_FOLDER = "/home/pi/bitgrit-personality-api/video/"
 
 app = Flask(__name__)
 app.secret_key = "secret key"
@@ -34,22 +34,31 @@ app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = set(['mp4'])
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # video to mp3 file conversion
+
+
 def video_converter(video_path):
     video_clip = mp.VideoFileClip(video_path)
-    video_clip.audio.write_audiofile(r"./audio/audio.mp3")
-    return os.path.abspath(r"./audio/audio.mp3")
+    video_clip.audio.write_audiofile(
+        "/home/pi/bitgrit-personality-api/audio/audio.mp3")
+    return os.path.abspath("/home/pi/bitgrit-personality-api/audio/audio.mp3")
 
 # mp3 to wav file conversion
+
+
 def wav_conversion(audio_path):
     sound = pydub.AudioSegment.from_mp3(audio_path)
-    sound.export('./audio/audio.wav', format='wav')
-    return os.path.abspath('./audio/audio.wav')
+    sound.export(
+        '/home/pi/bitgrit-personality-api/audio/audio.wav', format='wav')
+    return os.path.abspath('/home/pi/bitgrit-personality-api/audio/audio.wav')
 
 # wav to text file conversion
+
+
 def speech_conversion(audio_path):
     with sr.AudioFile(audio_path) as source:
         audio = r.record(source)
@@ -57,11 +66,12 @@ def speech_conversion(audio_path):
         return val
 
 
-# @app.route('/')
-# def upload_form():
-#     return render_template("upload.html")
+@app.route('/')
+def upload_form():
+    return render_template("upload.html")
 
-@app.route('/', methods=['POST','GET'])
+
+@app.route('/', methods=['POST'])
 def get_text_from_video():
     if request.method == 'POST':
         # check if the post request has the file part
@@ -76,13 +86,14 @@ def get_text_from_video():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File successfully uploaded')
-            video_path = "./video/video.mp4"
+            video_path = "/home/pi/bitgrit-personality-api/video/video.mp4"
             audio_path = video_converter(video_path)
             wav_path = wav_conversion(audio_path)
             textvalue = speech_conversion(wav_path)
 
             # Writing Speech-to-Text response to a file
-            f = open("./speech-to-text/profile.txt", "w")
+            f = open(
+                "/home/pi/bitgrit-personality-api/speech-to-text/profile.txt", "w")
             f.write(textvalue)
             f.close()
 
@@ -95,7 +106,7 @@ def get_text_from_video():
             personality_insights.set_service_url(
                 'https://api.eu-gb.personality-insights.watson.cloud.ibm.com/instances/5261ab93-9fc2-4710-84fc-83c043c2ea34/v3/profile?version=2017-10-13')
 
-            with open(join(dirname(__file__), './speech-to-text/profile.txt')) as profile_txt:
+            with open(join(dirname(__file__), '/home/pi/bitgrit-personality-api/speech-to-text/profile.txt')) as profile_txt:
                 profile = personality_insights.profile(
                     profile_txt.read(),
                     'application/json',
@@ -107,15 +118,14 @@ def get_text_from_video():
             value = json.dumps(profile, indent=2)
             name = request.form['username']
             question_number = request.form['question_no']
-            data={"text":textvalue,"json":value, "username":name, "question_no":question_number}
+            data = {"text": textvalue, "json": value,
+                    "username": name, "question_no": question_number}
             db.child("personality-data").push(data)
-            # db.child("personality-data").child(name).set(data)
-            return value, 200, {'Content-Type': 'application/json'}
-
+            return value, 200
         else:
             flash('Allowed file type is video (.mp4)')
             return redirect(request.url)
-    return render_template("upload.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
