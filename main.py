@@ -66,12 +66,15 @@ def speech_conversion(audio_path):
         return val
 
 
-@app.route('/')
-def upload_form():
-    return render_template("upload.html")
+@app.route('/firebase', methods=['GET'])
+def firbase_db():
+    # Fetching all entries from dB
+    pyre_db = db.child("personality-data").get()
+    final = pyre_db.val()
+    return final, 200
 
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST', 'GET'])
 def get_text_from_video():
     if request.method == 'POST':
         # check if the post request has the file part
@@ -121,10 +124,15 @@ def get_text_from_video():
             data = {"text": textvalue, "json": value,
                     "username": name, "question_no": question_number}
             db.child("personality-data").push(data)
-            return value, 200
+            # Fetching recent updated entry from firebase
+            pyre_db = db.child("personality-data").get()
+            for users in pyre_db.each():
+                final = users.val()
+            return final, 200
         else:
             flash('Allowed file type is video (.mp4)')
             return redirect(request.url)
+    return render_template("upload.html")
 
 
 if __name__ == '__main__':
