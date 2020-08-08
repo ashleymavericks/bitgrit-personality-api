@@ -1,4 +1,5 @@
 from flask import Flask, flash, request, redirect, render_template
+from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
 from ibm_watson import PersonalityInsightsV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -28,6 +29,7 @@ r = sr.Recognizer()
 UPLOAD_FOLDER = "/home/pi/bitgrit-personality-api/video/"
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 24 * 1024 * 1024
